@@ -100,3 +100,65 @@ def extract_markdown_images(text):
 
 def extract_markdown_links(text):
     return re.findall(r"\[(.*?)\]\((.*?)\)", text)
+
+def split_nodes_image(old_nodes):
+    current_nodes = []
+    for n in old_nodes:
+        current_nodes.extend(split_images(n.text, n.text_type))
+    return current_nodes
+
+def split_images(text,text_type):
+    current_nodes = []
+    images_extracted = extract_markdown_images(text)
+    image_count = len(images_extracted)
+
+    if not text:
+        return current_nodes
+
+    if image_count < 1:
+        current_nodes.append(TextNode(text,text_type))
+        return current_nodes
+    
+    markdown_image_to_split = f"![{images_extracted[0][0]}]({images_extracted[0][1]})"
+    split_text = text.split(markdown_image_to_split)
+
+    if split_text[0]:
+        current_nodes.append(TextNode(split_text[0],text_type))
+
+    current_nodes.append(TextNode(images_extracted[0][0],TextType.IMAGE,images_extracted[0][1]))
+
+    if split_text[1]:
+        current_nodes.extend(split_images(split_text[1],text_type))
+
+    return current_nodes
+
+def split_nodes_link(old_nodes):
+    current_nodes = []
+    for n in old_nodes:
+        current_nodes.extend(split_links(n.text,n.text_type))
+    return current_nodes
+
+def split_links(text,text_type):
+    current_nodes = []
+    links_extracted = extract_markdown_links(text)
+    link_count = len(links_extracted)
+
+    if not text:
+        return current_nodes
+
+    if link_count < 1:
+        current_nodes.append(TextNode(text,text_type))
+        return current_nodes
+    
+    markdown_link_to_split = f"[{links_extracted[0][0]}]({links_extracted[0][1]})"
+    split_text = text.split(markdown_link_to_split)
+
+    if split_text[0]:
+        current_nodes.append(TextNode(split_text[0],text_type))
+
+    current_nodes.append(TextNode(links_extracted[0][0],TextType.LINK,links_extracted[0][1]))
+
+    if split_text[1]:
+        current_nodes.extend(split_links(split_text[1],text_type))
+
+    return current_nodes
