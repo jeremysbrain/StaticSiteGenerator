@@ -51,20 +51,36 @@ class TestTextNode(unittest.TestCase):
         )
     
     def test_split_links(self):
-         node = TextNode(
-              "This is a link [link](https://google.com) and [another link](https://bing.com)",
-              TextType.TEXT
-         )
-         new_nodes = split_nodes_link([node])
-         self.assertListEqual(
-              [
-                   TextNode("This is a link ",TextType.TEXT),
-                   TextNode("link", TextType.LINK, "https://google.com"),
-                   TextNode(" and ", TextType.TEXT),
-                   TextNode("another link", TextType.LINK, "https://bing.com"),
-              ],
-              new_nodes,
-         )
+        node = TextNode(
+            "This is a link [link](https://google.com) and [another link](https://bing.com)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is a link ",TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://google.com"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("another link", TextType.LINK, "https://bing.com"),
+            ],
+            new_nodes,
+        )
+    
+    def test_text_to_textnodes(self):
+        # Test 1: Simple bold text
+        text1 = "This is **bold** text"
+        nodes1 = text_to_textnodes(text1)
+        # What do you expect nodes1 to contain?
+        
+        # Test 2: Mixed formatting
+        text2 = "This is *italic* and `code`"
+        nodes2 = text_to_textnodes(text2)
+        # What do you expect nodes2 to contain?
+        
+        # Test 3: Links and images
+        text3 = "Here is a [link](https://test.com) and ![image](image.png)"
+        nodes3 = text_to_textnodes(text3)
+        # What do you expect nodes3 to contain
 
 
 if __name__ == "__main__":
