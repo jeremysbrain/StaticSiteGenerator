@@ -71,17 +71,36 @@ class TestTextNode(unittest.TestCase):
         text1 = "This is **bold** text"
         nodes1 = text_to_textnodes(text1)
         # What do you expect nodes1 to contain?
-        
+
         # Test 2: Mixed formatting
         text2 = "This is *italic* and `code`"
         nodes2 = text_to_textnodes(text2)
         # What do you expect nodes2 to contain?
-        
+
         # Test 3: Links and images
         text3 = "Here is a [link](https://test.com) and ![image](image.png)"
         nodes3 = text_to_textnodes(text3)
         # What do you expect nodes3 to contain
 
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
 
 if __name__ == "__main__":
     unittest.main()

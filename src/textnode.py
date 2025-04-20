@@ -172,3 +172,11 @@ def text_to_textnodes(text):
     node_list = split_nodes_delimiter(node_list, "**", TextType.BOLD)
 
     return node_list
+
+def markdown_to_blocks(markdown):
+    md_split = markdown.split("\n\n")
+    block_list = []
+    for b in md_split:
+        if b != "":
+            block_list.append(b.strip())
+    return block_list
