@@ -70,7 +70,6 @@ def markdown_to_html_node(markdown):
     return ParentNode("div", block_html)
 
 def text_to_children(text):
-    print("TEXT_TO_CHILDREN: ", text)
     text_nodes = text_to_textnodes(text)
     children = []
     for text_node in text_nodes:

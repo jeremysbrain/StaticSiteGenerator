@@ -35,8 +35,6 @@ def text_node_to_html_node(text_node):
     if text_node.text_type == TextType.LINK:
         return LeafNode("a", text_node.text, {"href": text_node.url})
     if text_node.text_type == TextType.IMAGE:
-        print("TEXT_NODE: ", text_node)
-        print("TEXT_NODE.URL: ", text_node.url)
         return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
     raise ValueError(f"invalid text type: {text_node.text_type}")
 
@@ -123,9 +121,7 @@ def split_nodes_image(old_nodes):
             new_nodes.append(old_node)
             continue
         for image in images:
-            print("IMAGE: ", image)
             sections = original_text.split(f"![{image[0]}]({image[1]})", 1)
-            print("SECTIONS: ", sections)
             if len(sections) != 2:
                 raise ValueError("invalid markdown, image section not closed")
             if sections[0] != "":
@@ -134,7 +130,6 @@ def split_nodes_image(old_nodes):
             original_text = sections[1]
         if original_text != "":
             new_nodes.append(TextNode(original_text, TextType.TEXT))
-        print("NEW_NODES: ", new_nodes)
     return new_nodes
 
 def split_images(text,text_type):
@@ -219,13 +214,8 @@ def split_links(text,text_type):
 def text_to_textnodes(text):
     node_list = [TextNode(text, TextType.TEXT)]
     node_list = split_nodes_delimiter(node_list, "**", TextType.BOLD)
-    print("NODE_LIST: ", node_list)
     node_list = split_nodes_delimiter(node_list, "_", TextType.ITALIC)
-    print("NODE_LIST: ", node_list)
     node_list = split_nodes_delimiter(node_list, "`", TextType.CODE)
-    print("NODE_LIST: ", node_list)
     node_list = split_nodes_image(node_list)
-    print("NODE_LIST: ", node_list)
     node_list = split_nodes_link(node_list)
-    print("NODE_LIST: ", node_list)
     return node_list
