@@ -13,7 +13,7 @@ def extract_title(markdown):
             return line[2:].strip()
     return None
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath_dir):
     print(f"Generating HTML page from {from_path} to {dest_path} using template {template_path}")
     # Read the markdown file
     with open(from_path, 'r') as file:
@@ -36,13 +36,17 @@ def generate_page(from_path, template_path, dest_path):
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html_content)
 
+    # Add basepath directory
+    template = template.replace("href=\"/", f"href=\"{basepath_dir}")
+    template = template.replace("src=\"/", f"src=\"{basepath_dir}")
+
     # Write the generated HTML to the destination file
     with open(dest_path, 'w') as file:
         file.write(template)
         
     print(f"Generated HTML page saved to {dest_path}")
 
-def generate_pages_recursively(content_dir, template_path, public_dir):
+def generate_pages_recursively(content_dir, template_path, public_dir, basepath_dir):
     """
     Recursively generate HTML pages from markdown files while maintaining directory structure
     """
@@ -57,15 +61,15 @@ def generate_pages_recursively(content_dir, template_path, public_dir):
             if item.endswith('.md'):
                 # Convert .md files to .html
                 html_path = public_path.replace('.md', '.html')
-                generate_page(content_path, template_path, html_path)
+                generate_page(content_path, template_path, html_path, basepath_dir)
         elif os.path.isdir(content_path):
             # Create corresponding directory in public and recurse
-            generate_pages_recursively(content_path, template_path, public_path)
+            generate_pages_recursively(content_path, template_path, public_path, basepath_dir)
 
 def copy_static():
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Go up one level from src
     static_dir = os.path.join(directory, 'static')
-    public_dir = os.path.join(directory, 'public')
+    public_dir = os.path.join(directory, 'docs')
     temp_zip = 'temp.zip'  # Just the filename, since we're changing directory
     original_dir = os.getcwd()  # Store original directory at the start
     
@@ -82,7 +86,7 @@ def copy_static():
     
         # Change to project root for unzip
         os.chdir(directory)
-        subprocess.run(['unzip', '-o', temp_zip, '-d', 'public'], check=True)
+        subprocess.run(['unzip', '-o', temp_zip, '-d', 'docs'], check=True)
         
         # Replace the ls commands with find
         static_files = set(subprocess.check_output(
