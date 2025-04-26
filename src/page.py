@@ -37,8 +37,8 @@ def generate_page(from_path, template_path, dest_path, basepath_dir):
     template = template.replace("{{ Content }}", html_content)
 
     # Add basepath directory
-    template = template.replace("href=\"/", f"href=\"{basepath_dir}")
-    template = template.replace("src=\"/", f"src=\"{basepath_dir}")
+    template = template.replace("href=\"/", f"href=\"{basepath_dir}/")
+    template = template.replace("src=\"/", f"src=\"{basepath_dir}/")
 
     # Write the generated HTML to the destination file
     with open(dest_path, 'w') as file:
